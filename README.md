@@ -6,6 +6,7 @@
 * Makefile only works if haiku source was cloned to ~/haiku and the files are located in src/add-ons/translators/doc
 * No settings
 * No postscript output
+* Does not adhere to Haiku coding style
 
 # The antiword .recipe
 
