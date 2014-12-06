@@ -5,6 +5,7 @@
 #include "DOCTranslator.h"
 #include <cstring>
 #include <stdio.h>
+#include <stdlib.h>
 #include <fstream>
 #include <FindDirectory.h>
 #include <Catalog.h>
@@ -126,6 +127,7 @@ DOCTranslator::DerivedIdentify(BPositionIO *source,
                 const translation_format *inFormat, BMessage *ioExtension,
                 translator_info *outInfo, uint32 outType)
 {
+  (new BAlert("!", "Identifying...", "OK"))->Go();
   // This only checks if a given file has the header shared by all binary
   // Microsoft office formats. I do not think it is easily possible to detect
   // Word documents in particular.
@@ -138,7 +140,7 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
                 uint32 outType, BPositionIO *outDestination, int32 baseType)
 {
   // Note: BaseType will always be -1 because this is a B_TRANSLATOR_TEXT
-
+  (new BAlert("a", "Translate", "OK"))->Go();
 
   if (identify_msoffice_header(inSource, NULL) != B_OK)
   {
@@ -155,7 +157,20 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
     return B_ERROR;
   }
 
-  tmpDir.Append("doctranslator_tmp.doc");
+  BString tmpPath;
+
+  tmpPath.Append(tmpDir.Path()).Append("/DOCTranslator.XXXXXX");
+  (new BAlert("T", "Before file get", "OK"))->Go();
+  // This is just to get a temporary file name, we use an ofstream
+  int tempFileHandle = mkstemp(tmpPath.LockBuffer(0));
+  tmpPath.UnlockBuffer();
+
+  if (tempFileHandle == -1)
+  {
+    return B_ERROR;
+  }
+
+  close(tempFileHandle);
 
   off_t *bufferSize;
   inSource->GetSize(bufferSize);
@@ -163,10 +178,10 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
   uint8 fileBuffer[*bufferSize];
 
   inSource->Read(&fileBuffer, *bufferSize);
-
+  (new BAlert("", "Before open output file", "OK"))->Go();
   std::ofstream inputFile;
 
-  inputFile.open(tmpDir.Path(), ios::out | ios::binary);
+  inputFile.open(tmpPath, ios::out | ios::binary);
 
   if (!inputFile)
   {
@@ -174,27 +189,44 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
   }
 
   inputFile.write(&fileBuffer,  *bufferSize);
-
   // Now execute antiword
+  (new BAlert("", "Before system call", "OK"))->Go();
 
-  FILE *antiwordHandle = popen(strcat("antiword ", tmpDir.Path()), "r");
+  BString cmdName = BString("antiword ");
+  FILE *antiwordHandle = popen((cmdName << tmpPath).String(), "r");
 
   if (!antiwordHandle)
   {
     return B_ERROR;
   }
 
+  /*(new BAlert("", "Before seeking", "OK"))->Go();
   fseek(antiwordHandle, 0, SEEK_END);
+  (new BAlert("", "Before seeking 2", "OK"))->Go();
   size_t outputLength = ftell(antiwordHandle);
+  (new BAlert("", "Before seeking 3", "OK"))->Go();
   fseek(antiwordHandle, 0, SEEK_SET);
 
   uint8 outputBuffer[outputLength];
 
+  (new BAlert("", "Before reading", "OK"))->Go();
   fread(outputBuffer, 1, outputLength, antiwordHandle);
 
   pclose(antiwordHandle);
 
+  (new BAlert("", "Before writing", "OK"))->Go();
   outDestination->Write(outputBuffer, outputLength);
+*/
+  const size_t outputSize = 512;
+  (new BAlert("", "Buffering", "OK"))->Go();
+  uint8 outputBuffer[outputSize];
+  size_t bytesRead;
+  while ((bytesRead = fread(outputBuffer, 1, outputSize, antiwordHandle)) != 0)
+  {
+    outDestination->Write(outputBuffer, bytesRead);
+  }
+  pclose(antiwordHandle);
+  (new BAlert("", "Exiting...", "OK"))->Go();
 }
 
 
