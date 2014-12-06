@@ -41,3 +41,4 @@ protected:
 };
 
 #endif // DOC_TRANSLATOR_H
+

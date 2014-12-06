@@ -29,6 +29,7 @@ static const translation_format sInputFormats[] = {
 	}
 };
 
+
 static const translation_format sOutputFormats[] = {
 	{
 		B_TRANSLATOR_TEXT,
@@ -40,18 +41,23 @@ static const translation_format sOutputFormats[] = {
 	}
 };
 
+
 static const TranSetting sDefaultSettings[] = {
 	{ "Test setting", TRAN_SETTING_INT32, 2}
 };
 
+
 const uint32 kNumInputFormats = sizeof(sInputFormats) /
 	sizeof(translation_format);
+
 
 const uint32 kNumOutputFormats = sizeof(sOutputFormats) /
 	sizeof(translation_format);
 
+
 const uint32 kNumDefaultSettings = sizeof(sDefaultSettings) /
 	sizeof(TranSetting);
+
 
 BTranslator*
 make_nth_translator(int32 n, image_id you, uint32 flags, ...)
@@ -66,10 +72,11 @@ make_nth_translator(int32 n, image_id you, uint32 flags, ...)
 	}
 }
 
+
 DOCTranslator::DOCTranslator()
 	:
-	BaseTranslator("DOC documents",
-		"DOC document translator",
+	BaseTranslator(B_TRANSLATE("DOC documents"),
+		B_TRANSLATE("DOC document translator"),
 		DOC_TRANSLATOR_VERSION,
 		sInputFormats, kNumInputFormats,
 		sOutputFormats, kNumOutputFormats,
@@ -80,9 +87,11 @@ DOCTranslator::DOCTranslator()
 	(new BAlert("Construct DOCTranslator", "Constructor1", "OK"))->Go();
 }
 
+
 DOCTranslator::~DOCTranslator()
 {
 }
+
 
 int32
 msoffice_sig_cmp(const uint8 *bytes)
@@ -93,6 +102,7 @@ msoffice_sig_cmp(const uint8 *bytes)
 	size_t signature_length = 8;
 	return ((int32)(memcmp(msoffice_signature, bytes, signature_length)));
 }
+
 
 status_t
 identify_msoffice_header(BPositionIO *inSource, translator_info *outInfo)
@@ -125,6 +135,7 @@ identify_msoffice_header(BPositionIO *inSource, translator_info *outInfo)
 	return B_OK;
 }
 
+
 status_t
 DOCTranslator::DerivedIdentify(BPositionIO *source,
 	const translation_format *inFormat, BMessage *ioExtension,
@@ -136,6 +147,7 @@ DOCTranslator::DerivedIdentify(BPositionIO *source,
 	// Word documents in particular.
 	return identify_msoffice_header(source, outInfo);
 }
+
 
 status_t
 DOCTranslator::DerivedTranslate(BPositionIO *inSource,
@@ -153,7 +165,7 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
 	// Reset the cursor as it was progressed while identifying the header.
 	inSource->Seek(0, SEEK_SET);
 
-	// Antiword needs the input to be present as a file
+	// Get the tmp folder name
 	BPath tmpDir;
 	if (find_directory(B_SYSTEM_TEMP_DIRECTORY, &tmpDir) != B_OK)
 	{
@@ -162,7 +174,9 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
 
 	BString tmpPath;
 
+	// Template for a temporary file name
 	tmpPath.Append(tmpDir.Path()).Append("/DOCTranslator.XXXXXX");
+
 	(new BAlert("T", "Before file get", "OK"))->Go();
 	// This is just to get a temporary file name, we use an ofstream
 	int tempFileHandle = mkstemp(tmpPath.LockBuffer(0));
@@ -173,47 +187,43 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
 		return B_ERROR;
 	}
 
+	// Get rid of the the C style file stream
 	close(tempFileHandle);
 
+	// Read the whole input into a buffer
 	off_t *bufferSize;
 	inSource->GetSize(bufferSize);
-
 	uint8 fileBuffer[*bufferSize];
-
 	inSource->Read(&fileBuffer, *bufferSize);
+
 	(new BAlert("", "Before open output file", "OK"))->Go();
+
+	// And dump it into a file
 	std::ofstream inputFile;
-
 	inputFile.open(tmpPath, ios::out | ios::binary);
-
 	if (!inputFile)
 	{
 		return B_ERROR;
 	}
-
 	inputFile.write(&fileBuffer, *bufferSize);
-
 	inputFile.close();
-	// Now execute antiword
+
+	// Now execute antiword and have the shell dump stdout into a file
 	(new BAlert("", "Before system call", "OK"))->Go();
-
 	BString cmdName = BString("antiword ");
-
 	if (system((cmdName << tmpPath << " > " << tmpPath << "1").String()) == -1)
 	{
 		return B_ERROR;
 	}
 
+	// Read the whole output into a buffer
 	BFile returned(tmpPath << "1", O_RDONLY);
-
 	off_t fileSize;
-
 	returned.GetSize(&fileSize);
-
 	uint8 outputBuffer[fileSize];
-
 	returned.Read(outputBuffer, fileSize);
 
+	// And finally feed it to the destination
 	outDestination->Write(outputBuffer, fileSize);
 	(new BAlert("", "Exiting...", "OK"))->Go();
 }

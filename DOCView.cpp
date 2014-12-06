@@ -64,6 +64,7 @@ DOCView::DOCView(const BRect &frame, const char *name, uint32 resizeMode,
 	AddChild(stringView);
 }
 
+
 DOCView::~DOCView()
 {
 	fSettings->Release();
@@ -76,10 +77,12 @@ DOCView::AttachedToWindow()
 	BView::AttachedToWindow();
 }
 
+
 void
 DOCView::FrameResized(float width, float height)
 {
 }
+
 
 void
 DOCView::MessageReceived(BMessage *message)
