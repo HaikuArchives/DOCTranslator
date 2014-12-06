@@ -4,14 +4,14 @@
  * This file is distributed under the terms of the MIT license.
  */
 
- resource app_signature "application/x-vnd.Haiku-DOCTranslator";
+resource app_signature "application/x-vnd.Haiku-DOCTranslator";
 
- resource app_version {
-  major = 0,
-  middle = 1,
-  minor = 0,
-  variety = 0,
-  internal = 0,
-  short_info = "0.1.0",
-  long_info = "Haiku DOCTranslator Add-Ons."
+resource app_version {
+	major = 0,
+	middle = 1,
+	minor = 0,
+	variety = 0,
+	internal = 0,
+	short_info = "0.1.0",
+	long_info = "Haiku DOCTranslator Add-Ons."
 };

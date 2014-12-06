@@ -4,11 +4,11 @@ TYPE=APP
 APP_MIME_SIG=
 
 SRCS=DOCMain.cpp\
-		 DOCView.cpp\
-		 DOCTranslator.cpp\
-		 shared/BaseTranslator.cpp\
-		 shared/TranslatorSettings.cpp\
-		 shared/TranslatorWindow.cpp\
+	DOCView.cpp\
+	DOCTranslator.cpp\
+	shared/BaseTranslator.cpp\
+	shared/TranslatorSettings.cpp\
+	shared/TranslatorWindow.cpp\
 
 RDEFS=DOCTranslator.rdef
 

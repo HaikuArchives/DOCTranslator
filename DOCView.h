@@ -13,16 +13,17 @@
 
 class DOCView : public BView  {
 public:
-  DOCView(const BRect &frame, const char *name, uint32 resizeMode,
-                  uint32 flags, TranslatorSettings *settings);
-  ~DOCView();
+	DOCView(const BRect &frame, const char *name, uint32 resizeMode,
+		uint32 flags, TranslatorSettings *settings);
+	~DOCView();
 
 
-  virtual void AttachedToWindow();
-  virtual void FrameResized(float width, float height);
-  virtual void MessageReceived(BMessage *message);
+	virtual void AttachedToWindow();
+	virtual void FrameResized(float width, float height);
+	virtual void MessageReceived(BMessage *message);
+
 private:
-  TranslatorSettings *fSettings;
+	TranslatorSettings *fSettings;
 
 };
 

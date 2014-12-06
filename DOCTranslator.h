@@ -27,25 +27,22 @@
 class DOCTranslator : public BaseTranslator {
 public:
 
-  DOCTranslator();
+	DOCTranslator();
 
-  virtual status_t DerivedIdentify(BPositionIO *inSource,
-                  const translation_format *inFormat, BMessage *ioExtension,
-                  translator_info *outInfo, uint32 outType);
+	virtual status_t DerivedIdentify(BPositionIO *inSource,
+		const translation_format *inFormat, BMessage *ioExtension,
+		translator_info *outInfo, uint32 outType);
 
-  virtual status_t DerivedTranslate(BPositionIO *inSource,
-                  const translator_info *inInfo, BMessage *ioExtension,
-                  uint32 outType, BPositionIO *outDestination, int32 baseType);
+	virtual status_t DerivedTranslate(BPositionIO *inSource,
+		const translator_info *inInfo, BMessage *ioExtension, uint32 outType,
+		BPositionIO *outDestination, int32 baseType);
 
-  virtual BView *NewConfigView(TranslatorSettings *settings);
+	virtual BView *NewConfigView(TranslatorSettings *settings);
 
 protected:
-  virtual ~DOCTranslator();
-  // Protected since the object is only destroyed when reference count
-  // reaches zero
-
-private:
-
+	virtual ~DOCTranslator();
+	// Protected since the object is only destroyed when reference count
+	// reaches zero
 
 };
 
