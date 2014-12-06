@@ -6,9 +6,9 @@ APP_MIME_SIG=
 SRCS=DOCMain.cpp\
 		 DOCView.cpp\
 		 DOCTranslator.cpp\
-		 ../shared/BaseTranslator.cpp\
-		 ../shared/TranslatorSettings.cpp\
-		 ../shared/TranslatorWindow.cpp\
+		 shared/BaseTranslator.cpp\
+		 shared/TranslatorSettings.cpp\
+		 shared/TranslatorWindow.cpp\
 
 RDEFS=DOCTranslator.rdef
 
@@ -16,7 +16,7 @@ RSRCS=
 
 LIBS= be localestub translation textencoding $(STDCPPLIBS)
 LIBPATHS=
-LOCAL_INCLUDE_PATHS= ../shared
+LOCAL_INCLUDE_PATHS= shared
 
 OPTIMIZE=NONE
 
