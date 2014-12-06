@@ -7,7 +7,7 @@
 
 #include <Catalog.h>
 #include <StringView.h>
-
+#include <Alert.h>
 #include <stdio.h>
 
 #undef B_TRANSLATION_CONTEXT
@@ -15,8 +15,9 @@
 
 DOCView::DOCView(const BRect &frame, const char *name, uint32 resizeMode,
                 uint32 flags, TranslatorSettings *settings)
-        : BView(frame, name, resizeMode, flags | B_FRAME_EVENTS);
+        : BView(frame, name, resizeMode, flags| B_FRAME_EVENTS)
 {
+  BAlert("Test", "FromConstructor", "OK").Go();
   fSettings = settings;
 
   SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
@@ -41,7 +42,7 @@ DOCView::DOCView(const BRect &frame, const char *name, uint32 resizeMode,
                   int(B_TRANSLATION_MINOR_VERSION(DOC_TRANSLATOR_VERSION)),
                   int(B_TRANSLATION_REVISION_VERSION(DOC_TRANSLATOR_VERSION)),
                   __DATE__);
-  stringView = new BStrigView(rect, "version", version);
+  stringView = new BStringView(rect, "version", version);
   stringView->ResizeToPreferred();
   AddChild(stringView);
 
@@ -65,6 +66,7 @@ DOCView::~DOCView()
   fSettings->Release();
 }
 
+/*
 void
 DOCView::AttachedToWindow()
 {
@@ -81,3 +83,4 @@ DOCView::MessageReceived(BMessage *message)
 {
   BView::MessageReceived(message);
 }
+*/

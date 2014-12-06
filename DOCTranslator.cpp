@@ -5,15 +5,17 @@
 #include "DOCTranslator.h"
 #include <cstring>
 #include <stdio.h>
-#include <iostream>
+#include <fstream>
 #include <FindDirectory.h>
+#include <Catalog.h>
+#include <Alert.h>
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "DOCTranslator"
 
 static const translation_format sInputFormats[] = {
   {
-    B_DOC_FORMAT,
+    99,
     B_TRANSLATOR_TEXT,
     DOC_IN_QUALITY,
     DOC_IN_CAPABILITY,
@@ -45,6 +47,19 @@ const uint32 kNumOutputFormats = sizeof(sOutputFormats) /
 const uint32 kNumDefaultSettings = sizeof(sDefaultSettings) /
         sizeof(TranSetting);
 
+BTranslator*
+make_nth_translator(int32 n, image_id you, uint32 flags, ...)
+{
+  if (!n)
+  {
+    return new DOCTranslator();
+  }
+  else
+  {
+    return NULL;
+  }
+}
+
 DOCTranslator::DOCTranslator()
         : BaseTranslator(B_TRANSLATE("DOC documents"),
                          B_TRANSLATE("DOC document translator"),
@@ -53,12 +68,12 @@ DOCTranslator::DOCTranslator()
                          sOutputFormats, kNumOutputFormats,
                          "DOCTranslator_Settings",
                          sDefaultSettings, kNumDefaultSettings,
-                         B_TRANSLATOR_TEXT, B_DOC_FORMAT)
+                         B_TRANSLATOR_TEXT, 99)
 {
 }
 
 int32
-msoffice_signature_cmp(const uint8 *bytes)
+msoffice_sig_cmp(const uint8 *bytes)
 {
   uint8 msoffice_signature[8] = { 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A,
           0xE1 };
@@ -88,7 +103,7 @@ identify_msoffice_header(BPositionIO *inSource, translator_info *outInfo)
 
   if (outInfo)
   {
-    outInfo->type = B_DOC_FORMAT;
+    outInfo->type = 99;
     outInfo->group = B_TRANSLATOR_TEXT;
     outInfo->quality = DOC_IN_QUALITY;
     outInfo->capability = DOC_IN_QUALITY;
@@ -119,7 +134,7 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
   // Note: BaseType will always be -1 because this is a B_TRANSLATOR_TEXT
 
 
-  if (identify_ms_office_header(inSource, NULL) != B_OK)
+  if (identify_msoffice_header(inSource, NULL) != B_OK)
   {
     return B_NO_TRANSLATOR;
   }
@@ -129,20 +144,21 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
 
   // Antiword needs the input to be present as a file
   BPath tmpDir;
-  if (find_directory(B_COMMON_TEMP_DIRECTORY, &tmpDir) != B_OK)
+  if (find_directory(B_SYSTEM_TEMP_DIRECTORY, &tmpDir) != B_OK)
   {
     return B_ERROR;
   }
 
   tmpDir.Append("doctranslator_tmp.doc");
 
-  size_t bufferSize = inSource->GetSize();
+  off_t *bufferSize;
+  inSource->GetSize(bufferSize);
 
-  const uint8 fileBuffer[bufferSize];
+  uint8 fileBuffer[*bufferSize];
 
-  Read(fileBuffer, bufferSize);
+  inSource->Read(&fileBuffer, *bufferSize);
 
-  ofstream inputFile;
+  std::ofstream inputFile;
 
   inputFile.open(tmpDir.Path(), ios::out | ios::binary);
 
@@ -151,11 +167,11 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
     return B_ERROR;
   }
 
-  inputFile.write(fileBuffer, bufferSize);
+  inputFile.write(&fileBuffer,  *bufferSize);
 
   // Now execute antiword
 
-  FILE *antiwordHandle = popen("antiword " << tmpDir.Path(), "r");
+  FILE *antiwordHandle = popen(strcat("antiword ", tmpDir.Path()), "r");
 
   if (!antiwordHandle)
   {
@@ -164,7 +180,7 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
 
   fseek(antiwordHandle, 0, SEEK_END);
   size_t outputLength = ftell(antiwordHandle);
-  fseek(f, 0, SEEK_SET);
+  fseek(antiwordHandle, 0, SEEK_SET);
 
   uint8 outputBuffer[outputLength];
 
@@ -179,7 +195,9 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
 BView*
 DOCTranslator::NewConfigView(TranslatorSettings *settings)
 {
-  return new DOCView(BRect(0, 0, DOC_VIEW_WIDTH, PNG_VIEW_HEIGHT),
-                  B_TRANSLATE("DOCTranslator Settings"), B_FOLLOW_ALL,
-                  B_WILL_DRAW, settings);
+  BAlert("Test", "Test", "Test").Go();
+  return new DOCView(BRect(0, 0, DOC_VIEW_WIDTH, DOC_VIEW_HEIGHT),
+                  B_TRANSLATE("DOCTranslator Settings"), 0,
+                  0, settings);
 }
+

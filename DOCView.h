@@ -13,14 +13,15 @@
 
 class DOCView : public BView  {
 public:
-  PNGView(const BRect &frame, const char *name, uint32 resizeMode,
+  DOCView(const BRect &frame, const char *name, uint32 resizeMode,
                   uint32 flags, TranslatorSettings *settings);
-  ~PNGView();
+  ~DOCView();
 
+  /*
   virtual void AttachedToWindow();
   virtual void FrameResized(float width, float height);
   virtual void MessageReceived(BMessage *message);
-
+  */
 private:
   TranslatorSettings *fSettings;
 

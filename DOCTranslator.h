@@ -8,13 +8,17 @@
 #include <Translator.h>
 #include <TranslatorFormats.h>
 #include <TranslationDefs.h>
+#include <GraphicsDefs.h>
+#include <InterfaceDefs.h>
+#include <Screen.h>
 #include "BaseTranslator.h"
+#include "DOCView.h"
 
 #define DOC_TRANSLATOR_VERSION B_TRANSLATION_MAKE_VERSION(0,1,0)
 
 #define B_DOC_FORMAT = 'DOC ';
 
-#define DOC_IN_QUIALITY 0.8
+#define DOC_IN_QUALITY 0.8
 #define DOC_IN_CAPABILITY 0.8
 
 #define TEXT_OUT_QUALITY 0.4
@@ -33,7 +37,7 @@ public:
                   const translator_info *inInfo, BMessage *ioExtension,
                   uint32 outType, BPositionIO *outDestination, int32 baseType);
 
-  virtual BView *NewConfigWindow(TranslatorSettings *settings);
+  virtual BView *NewConfigView(TranslatorSettings *settings);
 
 protected:
   virtual ~DOCTranslator();
@@ -41,6 +45,7 @@ protected:
   // reaches zero
 
 private:
+
 
 };
 
