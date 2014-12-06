@@ -10,6 +10,7 @@
 #include <FindDirectory.h>
 #include <Catalog.h>
 #include <Alert.h>
+#include <File.h>
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "DOCTranslator"
@@ -188,17 +189,30 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
     return B_ERROR;
   }
 
-  inputFile.write(&fileBuffer,  *bufferSize);
+  inputFile.write(&fileBuffer, *bufferSize);
+
+  inputFile.close();
   // Now execute antiword
   (new BAlert("", "Before system call", "OK"))->Go();
 
   BString cmdName = BString("antiword ");
-  FILE *antiwordHandle = popen((cmdName << tmpPath).String(), "r");
 
-  if (!antiwordHandle)
+  if (system((cmdName << tmpPath << " > " << tmpPath << "1").String()) == -1)
   {
     return B_ERROR;
   }
+
+  BFile returned(tmpPath << "1", O_RDONLY);
+
+  off_t fileSize;
+
+  returned.GetSize(&fileSize);
+
+  uint8 outputBuffer[fileSize];
+
+  returned.Read(outputBuffer, fileSize);
+
+  outDestination->Write(outputBuffer, fileSize);
 
   /*(new BAlert("", "Before seeking", "OK"))->Go();
   fseek(antiwordHandle, 0, SEEK_END);
@@ -216,7 +230,6 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
 
   (new BAlert("", "Before writing", "OK"))->Go();
   outDestination->Write(outputBuffer, outputLength);
-*/
   const size_t outputSize = 512;
   (new BAlert("", "Buffering", "OK"))->Go();
   uint8 outputBuffer[outputSize];
@@ -226,6 +239,7 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
     outDestination->Write(outputBuffer, bytesRead);
   }
   pclose(antiwordHandle);
+*/
   (new BAlert("", "Exiting...", "OK"))->Go();
 }
 
