@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include <iostream>
 #include <FindDirectory.h>
-#include <Entry.h>
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "DOCTranslator"
@@ -32,6 +31,9 @@ static const translation_format sOutputFormats[] = {
     "text/plain",
     "Plain text file"
   }
+};
+
+static const TranSetting sDefaultSettings[] = {
 };
 
 const uint32 kNumInputFormats = sizeof(sInputFormats) /
@@ -180,6 +182,4 @@ DOCTranslator::NewConfigView(TranslatorSettings *settings)
   return new DOCView(BRect(0, 0, DOC_VIEW_WIDTH, PNG_VIEW_HEIGHT),
                   B_TRANSLATE("DOCTranslator Settings"), B_FOLLOW_ALL,
                   B_WILL_DRAW, settings);
-}
-
 }
