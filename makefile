@@ -1,6 +1,6 @@
 NAME=DOCTranslator
 
-TYPE=SHARED
+TYPE=APP
 APP_MIME_SIG=
 
 SRCS=DOCMain.cpp\
@@ -14,11 +14,11 @@ RDEFS=DOCTranslator.rdef
 
 RSRCS=
 
-LIBS= be localestub tracker translation textencoding $(STDCPPLIBS)
+LIBS= be localestub translation textencoding $(STDCPPLIBS)
 LIBPATHS=
 LOCAL_INCLUDE_PATHS= ../shared
 
-OPTIMIZE=
+OPTIMIZE=NONE
 
 LOCALES=
 
@@ -34,4 +34,4 @@ APP_VERSIOn=
 
 DRIVER_PATH=
 
-include ~/haiku/data/develop/makefile-engine
+include $(BUILDHOME)/etc/makefile-engine

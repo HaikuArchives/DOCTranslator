@@ -17,7 +17,7 @@ DOCView::DOCView(const BRect &frame, const char *name, uint32 resizeMode,
                 uint32 flags, TranslatorSettings *settings)
         : BView(frame, name, resizeMode, flags| B_FRAME_EVENTS)
 {
-  BAlert("Test", "FromConstructor", "OK").Go();
+  (new BAlert("Test", "FromConstructor", "OK"))->Go();
   fSettings = settings;
 
   SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
@@ -66,7 +66,7 @@ DOCView::~DOCView()
   fSettings->Release();
 }
 
-/*
+
 void
 DOCView::AttachedToWindow()
 {
@@ -83,4 +83,4 @@ DOCView::MessageReceived(BMessage *message)
 {
   BView::MessageReceived(message);
 }
-*/
+

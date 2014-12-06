@@ -14,12 +14,13 @@
 int
 main()
 {
-  BAlert("Main", "Main", "OK").Go();
   BApplication app("application/x-vnd.Haiku-DOCTranslator");
+  (new BAlert("PostMain", "PostMain", "OK"))->Go();
   status_t result;
   result = LaunchTranslatorWindow(new DOCTranslator,
                   B_TRANSLATE("DOC Settings"), BRect(0, 0, DOC_VIEW_WIDTH,
                   DOC_VIEW_HEIGHT));
+  (new BAlert("Main", "Main 2", "OK"))->Go();
   if (result == B_OK)
   {
     app.Run();
@@ -29,4 +30,5 @@ main()
   {
     return 1;
   }
+  return 0;
 }

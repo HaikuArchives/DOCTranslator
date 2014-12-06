@@ -17,11 +17,10 @@ public:
                   uint32 flags, TranslatorSettings *settings);
   ~DOCView();
 
-  /*
+
   virtual void AttachedToWindow();
   virtual void FrameResized(float width, float height);
   virtual void MessageReceived(BMessage *message);
-  */
 private:
   TranslatorSettings *fSettings;
 

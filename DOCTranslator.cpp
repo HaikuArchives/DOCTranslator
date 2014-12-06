@@ -15,7 +15,7 @@
 
 static const translation_format sInputFormats[] = {
   {
-    99,
+    B_DOC_FORMAT,
     B_TRANSLATOR_TEXT,
     DOC_IN_QUALITY,
     DOC_IN_CAPABILITY,
@@ -36,6 +36,7 @@ static const translation_format sOutputFormats[] = {
 };
 
 static const TranSetting sDefaultSettings[] = {
+  { "Test setting", TRAN_SETTING_INT32, 2}
 };
 
 const uint32 kNumInputFormats = sizeof(sInputFormats) /
@@ -61,14 +62,19 @@ make_nth_translator(int32 n, image_id you, uint32 flags, ...)
 }
 
 DOCTranslator::DOCTranslator()
-        : BaseTranslator(B_TRANSLATE("DOC documents"),
-                         B_TRANSLATE("DOC document translator"),
+        : BaseTranslator("DOC documents",
+                         "DOC document translator",
                          DOC_TRANSLATOR_VERSION,
                          sInputFormats, kNumInputFormats,
                          sOutputFormats, kNumOutputFormats,
                          "DOCTranslator_Settings",
                          sDefaultSettings, kNumDefaultSettings,
-                         B_TRANSLATOR_TEXT, 99)
+                         B_TRANSLATOR_TEXT, B_DOC_FORMAT)
+{
+  (new BAlert("Construct DOCTranslator", "Constructor1", "OK"))->Go();
+}
+
+DOCTranslator::~DOCTranslator()
 {
 }
 
@@ -103,7 +109,7 @@ identify_msoffice_header(BPositionIO *inSource, translator_info *outInfo)
 
   if (outInfo)
   {
-    outInfo->type = 99;
+    outInfo->type = B_DOC_FORMAT;
     outInfo->group = B_TRANSLATOR_TEXT;
     outInfo->quality = DOC_IN_QUALITY;
     outInfo->capability = DOC_IN_QUALITY;
@@ -195,7 +201,7 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
 BView*
 DOCTranslator::NewConfigView(TranslatorSettings *settings)
 {
-  BAlert("Test", "Test", "Test").Go();
+  (new BAlert("Test", "Test", "Test"))->Go();
   return new DOCView(BRect(0, 0, DOC_VIEW_WIDTH, DOC_VIEW_HEIGHT),
                   B_TRANSLATE("DOCTranslator Settings"), 0,
                   0, settings);
