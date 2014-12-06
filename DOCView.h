@@ -5,8 +5,9 @@
 #ifndef DOC_VIEW_H
 #define DOC_VIEW_H
 
-#include "TranslatorSettings.h"
 #include <View.h>
+
+#include "TranslatorSettings.h"
 
 #define DOC_VIEW_WIDTH 300
 #define DOC_VIEW_HEIGHT 270

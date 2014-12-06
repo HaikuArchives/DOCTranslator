@@ -5,12 +5,6 @@
 #ifndef DOC_TRANSLATOR_H
 #define DOC_TRANSLATOR_H
 
-#include <Translator.h>
-#include <TranslatorFormats.h>
-#include <TranslationDefs.h>
-#include <GraphicsDefs.h>
-#include <InterfaceDefs.h>
-#include <Screen.h>
 #include "BaseTranslator.h"
 #include "DOCView.h"
 

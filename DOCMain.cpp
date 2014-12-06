@@ -2,13 +2,15 @@
 // Copyright (c) 2014 Markus Himmel
 // This file is distributed under the terms of the MIT license.
 
+#include <Alert.h>
 #include <Application.h>
 #include <Catalog.h>
+#include <File.h>
+
 #include "DOCTranslator.h"
 #include "DOCView.h"
 #include "TranslatorWindow.h"
-#include "Alert.h"
-#include <File.h>
+
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "DOCTranslator"
 
@@ -32,7 +34,7 @@ main()
 	}
 	else
 	{
-	return 1;
+		return 1;
 	}
 	*/
 	BFile source("in.doc", O_RDONLY);

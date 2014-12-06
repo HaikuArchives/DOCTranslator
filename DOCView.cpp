@@ -3,12 +3,14 @@
 // This file is distributed under the terms of the MIT license
 
 #include "DOCView.h"
-#include "DOCTranslator.h"
+
+#include <stdio.h>
 
 #include <Catalog.h>
 #include <StringView.h>
 #include <Alert.h>
-#include <stdio.h>
+
+#include "DOCTranslator.h"
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "DOCTranslator"

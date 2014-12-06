@@ -3,14 +3,17 @@
 // This file is distributed under the terms of the MIT license.
 
 #include "DOCTranslator.h"
+
 #include <cstring>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include <fstream>
-#include <FindDirectory.h>
-#include <Catalog.h>
+
 #include <Alert.h>
+#include <Catalog.h>
 #include <File.h>
+#include <FindDirectory.h>
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "DOCTranslator"
