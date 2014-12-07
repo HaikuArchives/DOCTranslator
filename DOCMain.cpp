@@ -1,5 +1,5 @@
 // DOCMain.cpp
-// Copyright (c) 2014 Markus Himmel
+// Copyright (c) 2014 Markus Himmel <markus@himmel-villmar.de>
 // This file is distributed under the terms of the MIT license.
 
 #include <Alert.h>

@@ -1,10 +1,12 @@
 // DOCView.h
-// Copyright(c) 2014 Markus Himmel
+// Copyright (c) 2014 Markus Himmel <markus@himmel-villmar.de>
 // This file is distributed under the terms of the MIT license
 
 #ifndef DOC_VIEW_H
 #define DOC_VIEW_H
 
+#include <MenuField.h>
+#include <StringView.h>
 #include <View.h>
 
 #include "TranslatorSettings.h"
@@ -18,14 +20,22 @@ public:
 		uint32 flags, TranslatorSettings *settings);
 	~DOCView();
 
+	enum
+	{
+		MSG_CHARMAP_CHANGED = 'cmch'
+	};
 
-	virtual void AttachedToWindow();
-	virtual void FrameResized(float width, float height);
+	virtual void AllAttached();
 	virtual void MessageReceived(BMessage *message);
 
 private:
 	TranslatorSettings *fSettings;
 
+	BStringView *fTitle;
+	BStringView *fInfo;
+	BStringView *fAuthor;
+
+	BMenuField *fCharacterMapping;
 };
 
 #endif // DOC_VIEW_H

@@ -1,5 +1,5 @@
 // DOCTranslator
-// Copyright (c) 2014 Markus Himmel
+// Copyright (c) 2014 Markus Himmel <markus@himmel-villmar.de>
 // This file is distributed under the terms of the MIT license.
 
 #include "DOCTranslator.h"
@@ -17,6 +17,13 @@
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "DOCTranslator"
+
+// 8859-12 intentionally left out because it does not exist.
+const char * const mappings[] = { "8859-1", "8859-2", "8859-3", "8859-4",
+	"8859-5", "8859-6", "8859-7", "8859-8", "8859-9", "8859-10", "8859-11",
+	"8859-13", "8859-14", "8859-15", "8859-16", "cp437", "cp850", "cp852",
+	"cp862", "cp864", "cp866", "cp1250", "cp1251", "cp1252", "koi8-r",
+	"koi8-u", "MacCyrillic", "MacRoman", "roman", "UTF-8" };
 
 static const translation_format sInputFormats[] = {
 	{
@@ -38,12 +45,20 @@ static const translation_format sOutputFormats[] = {
 		TEXT_OUT_CAPABILITY,
 		"text/plain",
 		"Plain text file"
+	},
+	{
+		B_PS_FORMAT,
+		B_TRANSLATOR_TEXT,
+		PS_OUT_QUALITY,
+		PS_OUT_CAPABILITY,
+		"application/postscript",
+		"PostScript file"
 	}
 };
 
 
 static const TranSetting sDefaultSettings[] = {
-	{ "Test setting", TRAN_SETTING_INT32, 2}
+	{ DOC_SETTING_CHARACTER_MAPPING, TRAN_SETTING_INT32, 0}
 };
 
 
@@ -210,8 +225,16 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
 
 	// Now execute antiword and have the shell dump stdout into a file
 	(new BAlert("", "Before system call", "OK"))->Go();
-	BString cmdName = BString("antiword ");
-	if (system((cmdName << tmpPath << " > " << tmpPath << "1").String()) == -1)
+	BString cmd = BString("antiword ");
+
+	cmd << "-m " // Mapping
+		<< mappings[fSettings->SetGetInt32(DOC_SETTING_CHARACTER_MAPPING)]
+		<< " "
+		<< tmpPath // Source
+		<< " > " // Redirect
+		<< tmpPath << "1"; // Destination is source with appended 1
+
+	if (system(cmd.String()) == -1)
 	{
 		return B_ERROR;
 	}

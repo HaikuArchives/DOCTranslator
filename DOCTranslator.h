@@ -1,5 +1,5 @@
 // DOCTranslator
-// Copyright (c) 2014 Markus Himmel
+// Copyright (c) 2014 Markus Himmel <markus@himmel-villmar.de>
 // This file is distributed under the terms of the MIT license.
 
 #ifndef DOC_TRANSLATOR_H
@@ -11,12 +11,22 @@
 #define DOC_TRANSLATOR_VERSION B_TRANSLATION_MAKE_VERSION(0,1,0)
 
 #define B_DOC_FORMAT 'DOC '
+#define B_PS_FORMAT 'PS  '
 
 #define DOC_IN_QUALITY 0.8
 #define DOC_IN_CAPABILITY 0.8
 
 #define TEXT_OUT_QUALITY 0.4
 #define TEXT_OUT_CAPABILITY 0.5
+
+#define PS_OUT_QUALITY 0.7
+#define PS_OUT_CAPABILITY 0.5
+
+#define DOC_SETTING_CHARACTER_MAPPING "charactermapping"
+
+// We have to declare the size so that TUs including this header can determine
+// it via sizeof.
+extern const char * const mappings[30];
 
 class DOCTranslator : public BaseTranslator {
 public:

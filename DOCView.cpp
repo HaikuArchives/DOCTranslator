@@ -1,19 +1,35 @@
 // DOCView.cpp
-// Copyright (c) 2014 Markus Himmel
+// Copyright (c) 2014 Markus Himmel <markus@himmel-villmar.de>
 // This file is distributed under the terms of the MIT license
 
 #include "DOCView.h"
 
 #include <stdio.h>
 
-#include <Catalog.h>
-#include <StringView.h>
 #include <Alert.h>
+#include <Catalog.h>
+#include <LayoutBuilder.h>
+#include <MenuBar.h>
+#include <MenuField.h>
+#include <PopUpMenu.h>
+#include <StringView.h>
 
 #include "DOCTranslator.h"
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "DOCTranslator"
+
+BMenuItem *
+generate_item(uint32 index, uint32 current)
+{
+	BMessage *message = new BMessage(DOCView::MSG_CHARMAP_CHANGED);
+	message->AddInt32("value", index);
+
+	BMenuItem *item = new BMenuItem(mappings[index], message);
+	item->SetMarked(current == index);
+
+	return item;
+}
 
 DOCView::DOCView(const BRect &frame, const char *name, uint32 resizeMode,
 	uint32 flags, TranslatorSettings *settings)
@@ -24,44 +40,49 @@ DOCView::DOCView(const BRect &frame, const char *name, uint32 resizeMode,
 	fSettings = settings;
 
 	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
+	SetLowColor(ViewColor());
 
-	font_height fontHeight;
-	be_bold_font->GetHeight(&fontHeight);
-	float height = fontHeight.descent + fontHeight.ascent + fontHeight.leading;
+	fTitle = new BStringView("title", B_TRANSLATE("DOC document translator"));
+	fTitle->SetFont(be_bold_font);
 
-	BRect rect(10, 10, 200, 10 + height);
-	BStringView *stringView = new BStringView(rect, "title",
-		B_TRANSLATE("DOC document translator"));
-	stringView->SetFont(be_bold_font);
-	stringView->ResizeToPreferred();
-	AddChild(stringView);
-
-	float maxWidth = stringView->Bounds().Width();
-
-	rect.OffsetBy(0, height + 10);
 	char version[256];
 	snprintf(version, sizeof(version), B_TRANSLATE("Version %d.%d.%d, %s"),
-		int(B_TRANSLATION_MAJOR_VERSION(DOC_TRANSLATOR_VERSION)),
-		int(B_TRANSLATION_MINOR_VERSION(DOC_TRANSLATOR_VERSION)),
-		int(B_TRANSLATION_REVISION_VERSION(DOC_TRANSLATOR_VERSION)),
+		static_cast<int>(B_TRANSLATION_MAJOR_VERSION(DOC_TRANSLATOR_VERSION)),
+		static_cast<int>(B_TRANSLATION_MINOR_VERSION(DOC_TRANSLATOR_VERSION)),
+		static_cast<int>(B_TRANSLATION_REVISION_VERSION(
+			DOC_TRANSLATOR_VERSION)),
 		__DATE__);
-	stringView = new BStringView(rect, "version", version);
-	stringView->ResizeToPreferred();
-	AddChild(stringView);
+	fInfo = new BStringView("version", version);
 
-	if (stringView->Bounds().Width() > maxWidth)
+	fAuthor = new BStringView(
+		"Copyright ",
+		B_UTF8_COPYRIGHT "2014 Markus Himmel <markus@himmel-villmar.de>");
+
+	BPopUpMenu *menu = new BPopUpMenu("mapping");
+
+	uint32 currentMapping = fSettings->SetGetInt32(
+		DOC_SETTING_CHARACTER_MAPPING);
+
+	size_t numMappings = sizeof(mappings) / sizeof(char *);
+
+	for (int i = 0; i < numMappings; i++)
 	{
-		maxWidth = stringView->Bounds().Width();
+		menu->AddItem(generate_item(i, currentMapping));
 	}
 
-	GetFontHeight(&fontHeight);
-	height = fontHeight.descent + fontHeight.ascent + fontHeight.leading;
+	fCharacterMapping = new BMenuField(B_TRANSLATE("Character mapping:"), menu);
 
-	rect.OffsetBy(0, height + 5);
-	stringView = new BStringView(rect,
-		"Copyright", B_UTF8_COPYRIGHT "2014 Markus Himmel");
-	stringView->ResizeToPreferred();
-	AddChild(stringView);
+	BLayoutBuilder::Group<>(this, B_VERTICAL, 7)
+		.SetInsets(5)
+		.Add(fTitle)
+		.Add(fInfo)
+		.Add(fAuthor)
+		.AddGlue()
+		.AddGroup(B_HORIZONTAL)
+			.Add(fCharacterMapping)
+			.AddGlue()
+			.End()
+		.AddGlue();
 }
 
 
@@ -70,23 +91,27 @@ DOCView::~DOCView()
 	fSettings->Release();
 }
 
-
 void
-DOCView::AttachedToWindow()
+DOCView::AllAttached()
 {
-	BView::AttachedToWindow();
+	fCharacterMapping->Menu()->SetTargetForItems(this);
 }
-
-
-void
-DOCView::FrameResized(float width, float height)
-{
-}
-
 
 void
 DOCView::MessageReceived(BMessage *message)
 {
-	BView::MessageReceived(message);
+	switch (message->what)
+	{
+		case MSG_CHARMAP_CHANGED:
+			int32 value;
+			if (message->FindInt32("value", &value) == B_OK)
+			{
+				fSettings->SetGetInt32(DOC_SETTING_CHARACTER_MAPPING, &value);
+				fSettings->SaveSettings();
+			}
+			break;
+		default:
+			BView::MessageReceived(message);
+	}
 }
 
