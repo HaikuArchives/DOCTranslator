@@ -23,6 +23,7 @@
 #define PS_OUT_CAPABILITY 0.5
 
 #define DOC_SETTING_CHARACTER_MAPPING "charactermapping"
+#define DOC_SETTING_LANDSCAPE "landscape"
 
 // We have to declare the size so that TUs including this header can determine
 // it via sizeof.

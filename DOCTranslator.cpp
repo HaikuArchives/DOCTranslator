@@ -58,7 +58,8 @@ static const translation_format sOutputFormats[] = {
 
 
 static const TranSetting sDefaultSettings[] = {
-	{ DOC_SETTING_CHARACTER_MAPPING, TRAN_SETTING_INT32, 0}
+	{ DOC_SETTING_CHARACTER_MAPPING, TRAN_SETTING_INT32, 0},
+	{ DOC_SETTING_LANDSCAPE, TRAN_SETTING_BOOL, false}
 };
 
 

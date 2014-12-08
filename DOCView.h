@@ -5,6 +5,7 @@
 #ifndef DOC_VIEW_H
 #define DOC_VIEW_H
 
+#include <CheckBox.h>
 #include <MenuField.h>
 #include <StringView.h>
 #include <View.h>
@@ -22,7 +23,8 @@ public:
 
 	enum
 	{
-		MSG_CHARMAP_CHANGED = 'cmch'
+		MSG_CHARMAP_CHANGED = 'cmch',
+		MSG_LANDSCAPE_CHANGED = 'lsch'
 	};
 
 	virtual void AllAttached();
@@ -34,6 +36,8 @@ private:
 	BStringView *fTitle;
 	BStringView *fInfo;
 	BStringView *fAuthor;
+
+	BCheckBox *fLandscape;
 
 	BMenuField *fCharacterMapping;
 };

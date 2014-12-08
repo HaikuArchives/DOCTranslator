@@ -8,6 +8,7 @@
 
 #include <Alert.h>
 #include <Catalog.h>
+#include <CheckBox.h>
 #include <LayoutBuilder.h>
 #include <MenuBar.h>
 #include <MenuField.h>
@@ -39,6 +40,7 @@ DOCView::DOCView(const BRect &frame, const char *name, uint32 resizeMode,
 	(new BAlert("Test", "FromConstructor", "OK"))->Go();
 	fSettings = settings;
 
+	fSettings->Acquire();
 	SetViewColor(ui_color(B_PANEL_BACKGROUND_COLOR));
 	SetLowColor(ViewColor());
 
@@ -72,16 +74,25 @@ DOCView::DOCView(const BRect &frame, const char *name, uint32 resizeMode,
 
 	fCharacterMapping = new BMenuField(B_TRANSLATE("Character mapping:"), menu);
 
+	BMessage *msg = new BMessage(DOCView::MSG_LANDSCAPE_CHANGED);
+
+	fLandscape = new BCheckBox(B_TRANSLATE("Landscape mode"), msg);
+	bool current = fSettings->SetGetBool(DOC_SETTING_LANDSCAPE);
+	fLandscape->SetValue(current);
+
+
 	BLayoutBuilder::Group<>(this, B_VERTICAL, 7)
 		.SetInsets(5)
 		.Add(fTitle)
 		.Add(fInfo)
-		.Add(fAuthor)
 		.AddGlue()
 		.AddGroup(B_HORIZONTAL)
 			.Add(fCharacterMapping)
 			.AddGlue()
 			.End()
+		.Add(fLandscape)
+		.AddGlue()
+		.Add(fAuthor)
 		.AddGlue();
 }
 
@@ -94,6 +105,7 @@ DOCView::~DOCView()
 void
 DOCView::AllAttached()
 {
+	fLandscape->SetTarget(this);
 	fCharacterMapping->Menu()->SetTargetForItems(this);
 }
 
@@ -110,6 +122,14 @@ DOCView::MessageReceived(BMessage *message)
 				fSettings->SaveSettings();
 			}
 			break;
+
+		case MSG_LANDSCAPE_CHANGED:
+			bool boolValue;
+			boolValue = fLandscape->Value();
+			fSettings->SetGetBool(DOC_SETTING_LANDSCAPE, &boolValue);
+			fSettings->SaveSettings();
+			break;
+
 		default:
 			BView::MessageReceived(message);
 	}
