@@ -40,7 +40,7 @@ main()
 	BFile source("in.doc", O_RDONLY);
 	BFile destination("out.txt", O_WRONLY);
 
-	dt->Translate(&source, NULL, NULL, -1, &destination);
+	dt->Translate(&source, NULL, NULL, B_PS_FORMAT, &destination);
 	dt->Release();
 	return 0;
 }

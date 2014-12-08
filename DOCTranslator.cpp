@@ -25,6 +25,8 @@ const char * const mappings[] = { "8859-1", "8859-2", "8859-3", "8859-4",
 	"cp862", "cp864", "cp866", "cp1250", "cp1251", "cp1252", "koi8-r",
 	"koi8-u", "MacCyrillic", "MacRoman", "roman", "UTF-8" };
 
+const char * const paper[] = { "a4", "legal", "letter" };
+
 static const translation_format sInputFormats[] = {
 	{
 		B_DOC_FORMAT,
@@ -59,7 +61,8 @@ static const translation_format sOutputFormats[] = {
 
 static const TranSetting sDefaultSettings[] = {
 	{ DOC_SETTING_CHARACTER_MAPPING, TRAN_SETTING_INT32, 0},
-	{ DOC_SETTING_LANDSCAPE, TRAN_SETTING_BOOL, false}
+	{ DOC_SETTING_LANDSCAPE, TRAN_SETTING_BOOL, false},
+	{ DOC_SETTING_PAPER, TRAN_SETTING_INT32, 0}
 };
 
 
@@ -86,6 +89,20 @@ make_nth_translator(int32 n, image_id you, uint32 flags, ...)
 	{
 		return NULL;
 	}
+}
+
+
+bool
+recognize_type(uint32 type)
+{
+	for (int i = 0; i < kNumOutputFormats; i++)
+	{
+		if (type == sOutputFormats[i].type)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 
@@ -173,6 +190,10 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
 	// Note: BaseType will always be -1 because this is a B_TRANSLATOR_TEXT
 	(new BAlert("a", "Translate", "OK"))->Go();
 
+	if (!recognize_type(outType))
+	{
+		return B_NO_TRANSLATOR;
+	}
 	if (identify_msoffice_header(inSource, NULL) != B_OK)
 	{
 		return B_NO_TRANSLATOR;
@@ -230,10 +251,22 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
 
 	cmd << "-m " // Mapping
 		<< mappings[fSettings->SetGetInt32(DOC_SETTING_CHARACTER_MAPPING)]
-		<< " "
-		<< tmpPath // Source
+		<< " ";
+
+	if (outType == B_PS_FORMAT)
+	{
+		cmd << "-p " << paper[fSettings->SetGetInt32(DOC_SETTING_PAPER)] << " ";
+		if (fSettings->SetGetBool(DOC_SETTING_LANDSCAPE))
+		{
+			cmd << "-L ";
+		}
+	}
+
+	cmd << tmpPath // Source
 		<< " > " // Redirect
 		<< tmpPath << "1"; // Destination is source with appended 1
+
+	(new BAlert("", cmd.String(), "OK"))->Go();
 
 	if (system(cmd.String()) == -1)
 	{

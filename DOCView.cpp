@@ -21,12 +21,13 @@
 #define B_TRANSLATION_CONTEXT "DOCTranslator"
 
 BMenuItem *
-generate_item(uint32 index, uint32 current)
+generate_item(uint32 index, uint32 current, uint32 messageID,
+	const char * const labels[])
 {
-	BMessage *message = new BMessage(DOCView::MSG_CHARMAP_CHANGED);
+	BMessage *message = new BMessage(messageID);
 	message->AddInt32("value", index);
 
-	BMenuItem *item = new BMenuItem(mappings[index], message);
+	BMenuItem *item = new BMenuItem(labels[index], message);
 	item->SetMarked(current == index);
 
 	return item;
@@ -69,10 +70,27 @@ DOCView::DOCView(const BRect &frame, const char *name, uint32 resizeMode,
 
 	for (int i = 0; i < numMappings; i++)
 	{
-		menu->AddItem(generate_item(i, currentMapping));
+		menu->AddItem(generate_item(i, currentMapping, MSG_CHARMAP_CHANGED,
+			mappings));
 	}
 
 	fCharacterMapping = new BMenuField(B_TRANSLATE("Character mapping:"), menu);
+
+	menu = new BPopUpMenu("paper");
+
+	uint32 currentPaper = fSettings->SetGetInt32(
+		DOC_SETTING_PAPER);
+
+	size_t numPaper = sizeof(paper) / sizeof(char *);
+
+	for (int i = 0; i < numPaper; i++)
+	{
+		menu->AddItem(generate_item(i, currentPaper, MSG_PAPER_CHANGED,
+			paper));
+	}
+
+	fPaper = new BMenuField(B_TRANSLATE("Paper size:"), menu);
+
 
 	BMessage *msg = new BMessage(DOCView::MSG_LANDSCAPE_CHANGED);
 
@@ -86,6 +104,10 @@ DOCView::DOCView(const BRect &frame, const char *name, uint32 resizeMode,
 		.Add(fTitle)
 		.Add(fInfo)
 		.AddGlue()
+		.AddGroup(B_HORIZONTAL)
+			.Add(fPaper)
+			.AddGlue()
+			.End()
 		.AddGroup(B_HORIZONTAL)
 			.Add(fCharacterMapping)
 			.AddGlue()
@@ -106,16 +128,17 @@ void
 DOCView::AllAttached()
 {
 	fLandscape->SetTarget(this);
+	fPaper->Menu()->SetTargetForItems(this);
 	fCharacterMapping->Menu()->SetTargetForItems(this);
 }
 
 void
 DOCView::MessageReceived(BMessage *message)
 {
+	int32 value;
 	switch (message->what)
 	{
 		case MSG_CHARMAP_CHANGED:
-			int32 value;
 			if (message->FindInt32("value", &value) == B_OK)
 			{
 				fSettings->SetGetInt32(DOC_SETTING_CHARACTER_MAPPING, &value);
@@ -129,6 +152,13 @@ DOCView::MessageReceived(BMessage *message)
 			fSettings->SetGetBool(DOC_SETTING_LANDSCAPE, &boolValue);
 			fSettings->SaveSettings();
 			break;
+
+		case MSG_PAPER_CHANGED:
+			if (message->FindInt32("value", &value) == B_OK)
+			{
+				fSettings->SetGetInt32(DOC_SETTING_PAPER, &value);
+				fSettings->SaveSettings();
+			}
 
 		default:
 			BView::MessageReceived(message);

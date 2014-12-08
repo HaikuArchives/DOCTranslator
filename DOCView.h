@@ -24,7 +24,8 @@ public:
 	enum
 	{
 		MSG_CHARMAP_CHANGED = 'cmch',
-		MSG_LANDSCAPE_CHANGED = 'lsch'
+		MSG_LANDSCAPE_CHANGED = 'lsch',
+		MSG_PAPER_CHANGED = 'pfch'
 	};
 
 	virtual void AllAttached();
@@ -40,6 +41,7 @@ private:
 	BCheckBox *fLandscape;
 
 	BMenuField *fCharacterMapping;
+	BMenuField *fPaper;
 };
 
 #endif // DOC_VIEW_H

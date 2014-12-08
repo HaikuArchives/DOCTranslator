@@ -24,10 +24,12 @@
 
 #define DOC_SETTING_CHARACTER_MAPPING "charactermapping"
 #define DOC_SETTING_LANDSCAPE "landscape"
+#define DOC_SETTING_PAPER "papersize"
 
 // We have to declare the size so that TUs including this header can determine
 // it via sizeof.
 extern const char * const mappings[30];
+extern const char * const paper[3];
 
 class DOCTranslator : public BaseTranslator {
 public:
