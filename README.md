@@ -1,5 +1,4 @@
-The translator corretly translates .doc files to plain text files and PostScript files. There are
-some settings which have yet to be added to the settings dialog.
+The translator corretly translates .doc files to plain text files, PostScript files and PDF files.
 
 ### The antiword .recipe
 
