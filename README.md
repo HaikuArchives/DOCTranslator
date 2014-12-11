@@ -1,5 +1,8 @@
 The translator corretly translates .doc files to plain text files, PostScript files and PDF files.
 
+### Code-In mentors
+Feel free to suggest changes that are still necessary and I will do my best to incorporate them ASAP.
+
 ### The antiword .recipe
 
 The antiword .recipe has some problems:
