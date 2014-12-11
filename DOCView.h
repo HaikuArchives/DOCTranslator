@@ -25,7 +25,9 @@ public:
 	{
 		MSG_CHARMAP_CHANGED = 'cmch',
 		MSG_LANDSCAPE_CHANGED = 'lsch',
-		MSG_PAPER_CHANGED = 'pfch'
+		MSG_PAPER_CHANGED = 'pfch',
+		MSG_REMOVED_CHANGED = 'rmch',
+		MSG_HIDDEN_CHANGED = 'hdch'
 	};
 
 	virtual void AllAttached();
@@ -39,6 +41,9 @@ private:
 	BStringView *fAuthor;
 
 	BCheckBox *fLandscape;
+
+	BCheckBox *fHidden;
+	BCheckBox *fRemoved;
 
 	BMenuField *fCharacterMapping;
 	BMenuField *fPaper;

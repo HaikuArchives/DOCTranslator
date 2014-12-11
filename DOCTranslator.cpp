@@ -55,6 +55,14 @@ static const translation_format sOutputFormats[] = {
 		PS_OUT_CAPABILITY,
 		"application/postscript",
 		"PostScript file"
+	},
+	{
+		B_PDF_FORMAT,
+		B_TRANSLATOR_TEXT,
+		PDF_OUT_QUALITY,
+		PDF_OUT_CAPABILITY,
+		"application/pdf",
+		"PDF document"
 	}
 };
 
@@ -62,7 +70,9 @@ static const translation_format sOutputFormats[] = {
 static const TranSetting sDefaultSettings[] = {
 	{ DOC_SETTING_CHARACTER_MAPPING, TRAN_SETTING_INT32, 0},
 	{ DOC_SETTING_LANDSCAPE, TRAN_SETTING_BOOL, false},
-	{ DOC_SETTING_PAPER, TRAN_SETTING_INT32, 0}
+	{ DOC_SETTING_PAPER, TRAN_SETTING_INT32, 0},
+	{ DOC_SETTING_HIDDEN, TRAN_SETTING_BOOL, false},
+	{ DOC_SETTING_REMOVED, TRAN_SETTING_BOOL, false}
 };
 
 
@@ -261,6 +271,22 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
 			cmd << "-L ";
 		}
 	}
+
+	if (outType == B_PDF_FORMAT)
+	{
+		cmd << "-a " << paper[fSettings->SetGetInt32(DOC_SETTING_PAPER)] << " ";
+	}
+
+	if (fSettings->SetGetBool(DOC_SETTING_REMOVED))
+	{
+		cmd << "-r ";
+	}
+
+	if (fSettings->SetGetBool(DOC_SETTING_HIDDEN))
+	{
+		cmd << "-s ";
+	}
+
 
 	cmd << tmpPath // Source
 		<< " > " // Redirect

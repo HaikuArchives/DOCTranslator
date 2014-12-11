@@ -12,6 +12,7 @@
 
 #define B_DOC_FORMAT 'DOC '
 #define B_PS_FORMAT 'PS  '
+#define B_PDF_FORMAT 'PDF '
 
 #define DOC_IN_QUALITY 0.8
 #define DOC_IN_CAPABILITY 0.8
@@ -22,9 +23,14 @@
 #define PS_OUT_QUALITY 0.7
 #define PS_OUT_CAPABILITY 0.5
 
+#define PDF_OUT_QUALITY 0.8
+#define PDF_OUT_CAPABILITY 0.5
+
 #define DOC_SETTING_CHARACTER_MAPPING "charactermapping"
 #define DOC_SETTING_LANDSCAPE "landscape"
 #define DOC_SETTING_PAPER "papersize"
+#define DOC_SETTING_REMOVED "removed"
+#define DOC_SETTING_HIDDEN "hidden"
 
 // We have to declare the size so that TUs including this header can determine
 // it via sizeof.

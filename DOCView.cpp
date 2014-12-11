@@ -98,6 +98,18 @@ DOCView::DOCView(const BRect &frame, const char *name, uint32 resizeMode,
 	bool current = fSettings->SetGetBool(DOC_SETTING_LANDSCAPE);
 	fLandscape->SetValue(current);
 
+	msg = new BMessage(DOCView::MSG_REMOVED_CHANGED);
+
+	fRemoved = new BCheckBox(B_TRANSLATE("Show removed text"), msg);
+	current = fSettings->SetGetBool(DOC_SETTING_REMOVED);
+	fRemoved->SetValue(current);
+
+	msg = new BMessage(DOCView::MSG_HIDDEN_CHANGED);
+
+	fHidden = new BCheckBox(B_TRANSLATE("Show hidden text"), msg);
+	current = fSettings->SetGetBool(DOC_SETTING_HIDDEN);
+	fHidden->SetValue(current);
+
 
 	BLayoutBuilder::Group<>(this, B_VERTICAL, 7)
 		.SetInsets(5)
@@ -113,6 +125,8 @@ DOCView::DOCView(const BRect &frame, const char *name, uint32 resizeMode,
 			.AddGlue()
 			.End()
 		.Add(fLandscape)
+		.Add(fHidden)
+		.Add(fRemoved)
 		.AddGlue()
 		.Add(fAuthor)
 		.AddGlue();
@@ -128,6 +142,8 @@ void
 DOCView::AllAttached()
 {
 	fLandscape->SetTarget(this);
+	fRemoved->SetTarget(this);
+	fHidden->SetTarget(this);
 	fPaper->Menu()->SetTargetForItems(this);
 	fCharacterMapping->Menu()->SetTargetForItems(this);
 }
@@ -136,6 +152,7 @@ void
 DOCView::MessageReceived(BMessage *message)
 {
 	int32 value;
+	bool boolValue;
 	switch (message->what)
 	{
 		case MSG_CHARMAP_CHANGED:
@@ -147,7 +164,6 @@ DOCView::MessageReceived(BMessage *message)
 			break;
 
 		case MSG_LANDSCAPE_CHANGED:
-			bool boolValue;
 			boolValue = fLandscape->Value();
 			fSettings->SetGetBool(DOC_SETTING_LANDSCAPE, &boolValue);
 			fSettings->SaveSettings();
@@ -160,8 +176,22 @@ DOCView::MessageReceived(BMessage *message)
 				fSettings->SaveSettings();
 			}
 
+		case MSG_REMOVED_CHANGED:
+			boolValue = fRemoved->Value();
+			fSettings->SetGetBool(DOC_SETTING_REMOVED, &boolValue);
+			fSettings->SaveSettings();
+			break;
+
+		case MSG_HIDDEN_CHANGED:
+			boolValue = fHidden->Value();
+			fSettings->SetGetBool(DOC_SETTING_HIDDEN, &boolValue);
+			fSettings->SaveSettings();
+			break;
+
+
 		default:
 			BView::MessageReceived(message);
+			break;
 	}
 }
 
