@@ -127,7 +127,6 @@ DOCTranslator::DOCTranslator()
 		sDefaultSettings, kNumDefaultSettings,
 		B_TRANSLATOR_TEXT, B_DOC_FORMAT)
 {
-	(new BAlert("Construct DOCTranslator", "Constructor1", "OK"))->Go();
 }
 
 
@@ -184,7 +183,6 @@ DOCTranslator::DerivedIdentify(BPositionIO *source,
 	const translation_format *inFormat, BMessage *ioExtension,
 	translator_info *outInfo, uint32 outType)
 {
-	(new BAlert("!", "Identifying...", "OK"))->Go();
 	// This only checks if a given file has the header shared by all binary
 	// Microsoft office formats. I do not think it is easily possible to detect
 	// Word documents in particular.
@@ -198,7 +196,6 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
 	uint32 outType, BPositionIO *outDestination, int32 baseType)
 {
 	// Note: BaseType will always be -1 because this is a B_TRANSLATOR_TEXT
-	(new BAlert("a", "Translate", "OK"))->Go();
 
 	if (!recognize_type(outType))
 	{
@@ -224,7 +221,6 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
 	// Template for a temporary file name
 	tmpPath.Append(tmpDir.Path()).Append("/DOCTranslator.XXXXXX");
 
-	(new BAlert("T", "Before file get", "OK"))->Go();
 	// This is just to get a temporary file name, we use an ofstream
 	int tempFileHandle = mkstemp(tmpPath.LockBuffer(0));
 	tmpPath.UnlockBuffer();
@@ -243,7 +239,6 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
 	uint8 fileBuffer[*bufferSize];
 	inSource->Read(&fileBuffer, *bufferSize);
 
-	(new BAlert("", "Before open output file", "OK"))->Go();
 
 	// And dump it into a file
 	std::ofstream inputFile;
@@ -256,7 +251,6 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
 	inputFile.close();
 
 	// Now execute antiword and have the shell dump stdout into a file
-	(new BAlert("", "Before system call", "OK"))->Go();
 	BString cmd = BString("antiword ");
 
 	cmd << "-m " // Mapping
@@ -292,7 +286,6 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
 		<< " > " // Redirect
 		<< tmpPath << "1"; // Destination is source with appended 1
 
-	(new BAlert("", cmd.String(), "OK"))->Go();
 
 	if (system(cmd.String()) == -1)
 	{
@@ -308,14 +301,12 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
 
 	// And finally feed it to the destination
 	outDestination->Write(outputBuffer, fileSize);
-	(new BAlert("", "Exiting...", "OK"))->Go();
 }
 
 
 BView*
 DOCTranslator::NewConfigView(TranslatorSettings *settings)
 {
-	(new BAlert("Test", "Test", "Test"))->Go();
 	return new DOCView(BRect(0, 0, DOC_VIEW_WIDTH, DOC_VIEW_HEIGHT),
 	B_TRANSLATE("DOCTranslator Settings"), 0, 0, settings);
 }

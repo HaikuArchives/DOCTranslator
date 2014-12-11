@@ -38,7 +38,6 @@ DOCView::DOCView(const BRect &frame, const char *name, uint32 resizeMode,
 	:
 	BView(frame, name, resizeMode, flags| B_FRAME_EVENTS)
 {
-	(new BAlert("Test", "FromConstructor", "OK"))->Go();
 	fSettings = settings;
 
 	fSettings->Acquire();

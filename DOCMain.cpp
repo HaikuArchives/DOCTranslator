@@ -19,7 +19,6 @@ main()
 {
 	BApplication app("application/x-vnd.Haiku-DOCTranslator");
 	DOCTranslator *dt = new DOCTranslator();
-	(new BAlert("PostMain", "PostMain", "OK"))->Go();
 
 	/*
 	status_t result;
