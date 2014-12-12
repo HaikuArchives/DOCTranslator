@@ -34,4 +34,4 @@ APP_VERSIOn=
 
 DRIVER_PATH=
 
-include $(BUILDHOME)/etc/makefile-engine
+include $(DEVEL_DIRECTORY)/etc/makefile-engine
