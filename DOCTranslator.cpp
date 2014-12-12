@@ -301,6 +301,8 @@ DOCTranslator::DerivedTranslate(BPositionIO *inSource,
 
 	// And finally feed it to the destination
 	outDestination->Write(outputBuffer, fileSize);
+
+	return B_OK;
 }
 
 
