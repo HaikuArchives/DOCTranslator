@@ -32,8 +32,6 @@ LINKER_FLAGS=
 
 APP_VERSIOn=
 
-TARGET_DIR=bin
-
 DRIVER_PATH=
 DEVEL_DIRECTORY := \
 $(shell findpaths -r "makefile_engine" B_FIND_PATH_DEVELOP_DIRECTORY)
